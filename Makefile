@@ -82,3 +82,7 @@ testing-with-database-network:
 
 clean-up:
 	@docker network rm $(TESTING_DB_NETWORK) || true
+
+.PHONY: test
+test:
+	go test ./...
