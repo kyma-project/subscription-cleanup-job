@@ -5,20 +5,6 @@ else
 IMG_NAME := $(APP_NAME)
 endif
 
-# Configuration for Kyma Environment Broker cleanup job image
-ifneq ($(strip $(DOCKER_PUSH_REPOSITORY)),)
-CLEANUP_IMG_NAME := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_CLEANUP_NAME)
-else
-CLEANUP_IMG_NAME := $(APP_CLEANUP_NAME)
-endif
-
-# Configuration for Kyma Environment Broker Subaccount cleaner job image
-ifneq ($(strip $(DOCKER_PUSH_REPOSITORY)),)
-SUBACCOUNT_CLEANUP_IMG_NAME := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_SUBACCOUNT_CLEANUP_NAME)
-else
-SUBACCOUNT_CLEANUP_IMG_NAME := $(APP_SUBACCOUNT_CLEANUP_NAME)
-endif
-
 # Configuration for Kyma Environment Broker subscription cleanup job image
 ifneq ($(strip $(DOCKER_PUSH_REPOSITORY)),)
 SUBSCRIPTION_CLEANUP_IMG_NAME := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_SUBSCRIPTION_CLEANUP_NAME)
@@ -26,16 +12,9 @@ else
 SUBSCRIPTION_CLEANUP_IMG_NAME := $(APP_SUBSCRIPTION_CLEANUP_NAME)
 endif
 
-# Configuration for Kyma Environment Broker trial cleanup job image
-ifneq ($(strip $(DOCKER_PUSH_REPOSITORY)),)
-TRIAL_CLEANUP_IMG_NAME := $(DOCKER_PUSH_REPOSITORY)$(DOCKER_PUSH_DIRECTORY)/$(APP_TRIAL_CLEANUP_NAME)
-else
-TRIAL_CLEANUP_IMG_NAME := $(APP_TRIAL_CLEANUP_NAME)
-endif
-
 TAG := $(DOCKER_TAG)
 # BASE_PKG is a root package of the component
-BASE_PKG := github.com/kyma-project/control-plane
+BASE_PKG := github.com/kyma-project/subscription-cleanup-job
 # IMG_GOPATH is a path to go path in the container
 IMG_GOPATH := /workspace/go
 # IMG_GOCACHE is a path to go cache in the container
