@@ -1,0 +1,13 @@
+filters:
+  ".*":
+    approvers:
+     - code-approvers
+    reviewers:
+     - code-reviewers
+  '\.md$|/docs/|^milv\.config\.yaml$':
+    approvers:
+      - documentation-approvers
+    reviewers:
+      - documentation-reviewers
+    labels:
+      - area/documentation
