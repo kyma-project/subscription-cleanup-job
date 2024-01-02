@@ -1,0 +1,9 @@
+module-name: subscription-cleanup-job
+protecode:
+  - europe-docker.pkg.dev/kyma-project/prod/kyma-environment-subscription-cleanup-job
+  - europe-docker.pkg.dev/kyma-project/prod/control-plane/kyma-environment-subscription-cleanup-job
+whitesource:
+  language: golang-mod
+  subprojects: false
+  exclude:
+    - "**/*_test.go"
