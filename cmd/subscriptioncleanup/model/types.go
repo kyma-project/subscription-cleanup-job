@@ -17,6 +17,8 @@ func NewHyperscalerType(provider string) (HyperscalerType, error) {
 	switch hyperscalerType {
 	case GCP, Azure, AWS:
 		return hyperscalerType, nil
+	case "gcp_cf-sa30":
+		return GCP, nil
 	}
 	return "", fmt.Errorf("unknown Hyperscaler provider type: %s", provider)
 }

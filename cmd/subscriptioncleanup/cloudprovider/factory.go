@@ -3,7 +3,7 @@ package cloudprovider
 import (
 	"fmt"
 
-	"github.com/kyma-project/kyma-environment-broker/cmd/subscriptioncleanup/model"
+	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
 )
 
 type ResourceCleaner interface {
