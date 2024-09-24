@@ -1,0 +1,33 @@
+name: Build Cleanup Job
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "CODEOWNERS"
+      - "LICENSE"
+      - "OWNERS"
+      - "OWNER_ALIASES"
+  pull_request_target:
+    types: [opened, synchronize]
+    paths-ignore:
+      - "**/*.md"
+      - "CODEOWNERS"
+      - "LICENSE"
+      - "OWNERS"
+      - "OWNER_ALIASES"
+
+permissions:
+  id-token: write # This is required for requesting the JWT token
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build-image:
+    uses: kyma-project/test-infra/.github/workflows/image-builder.yml@main # Usage: kyma-project/test-infra/.github/workflows/image-builder.yml@main
+    with:
+      name: kyma-environment-subscription-cleanup-job
+      dockerfile: Dockerfile.job
+      context: ./
+      export-tags: false
