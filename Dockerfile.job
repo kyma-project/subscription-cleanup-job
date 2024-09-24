@@ -7,7 +7,6 @@ COPY cmd cmd
 COPY go.mod go.mod
 COPY go.sum go.sum
 
-ARG BIN
 RUN CGO_ENABLED=0 go build -o /bin/main ./cmd/subscriptioncleanup/main.go
 
 # Get latest CA certs
