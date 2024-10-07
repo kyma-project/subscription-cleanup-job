@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.8.4
 	github.com/vrischmann/envconfig v1.3.0
 	k8s.io/api v0.27.4
-	k8s.io/apimachinery v0.27.4
+	k8s.io/apimachinery v0.27.7
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 )
 
