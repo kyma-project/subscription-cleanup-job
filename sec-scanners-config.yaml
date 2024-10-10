@@ -1,6 +1,6 @@
 module-name: subscription-cleanup-job
 protecode:
-  - europe-docker.pkg.dev/kyma-project/prod/kyma-environment-subscription-cleanup-job
+  - europe-docker.pkg.dev/kyma-project/prod/kyma-environment-subscription-cleanup-job:latest
 whitesource:
   language: golang-mod
   subprojects: false
