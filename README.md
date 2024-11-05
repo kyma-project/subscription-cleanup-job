@@ -1,3 +1,5 @@
+[![REUSE status](https://api.reuse.software/badge/github.com/kyma-project/subscription-cleanup-job)](https://api.reuse.software/info/github.com/kyma-project/subscription-cleanup-job)
+
 # Kyma Control Plane - Subscription Cleanup Job
 
 ## Overview
