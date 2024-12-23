@@ -57,7 +57,7 @@ require (
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/oauth2 v0.14.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
@@ -79,8 +79,8 @@ require (
 
 replace (
 	golang.org/x/crypto => golang.org/x/crypto v0.31.0
+	golang.org/x/net => golang.org/x/net v0.33.0
 	k8s.io/api => k8s.io/api v0.26.10
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.26.10
 	k8s.io/apimachinery => k8s.io/apimachinery v0.26.10
 	k8s.io/client-go => k8s.io/client-go v0.26.10
 	k8s.io/kubectl => k8s.io/kubectl v0.26.10
