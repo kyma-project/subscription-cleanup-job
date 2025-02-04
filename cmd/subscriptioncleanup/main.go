@@ -27,7 +27,7 @@ type config struct {
 }
 
 func main() {
-	log.Info("Starting cleanup job!")
+	log.Info("Starting cleanup job, the void patch!")
 	cfg := config{}
 	err := envconfig.InitWithPrefix(&cfg, "APP")
 	exitOnError(err, "Failed to load application config")
