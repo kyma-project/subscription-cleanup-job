@@ -18,7 +18,6 @@ type config struct {
 	clientSecret   string
 	subscriptionID string
 	tenantID       string
-	userAgent      string
 }
 
 func NewAzureResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, error) {
@@ -45,9 +44,6 @@ func (ac azureResourceCleaner) Do() error {
 		nextResult, err := pager.NextPage(ctx)
 		if err != nil {
 			return err
-		}
-		if nextResult.ResourceGroupListResult.Value != nil {
-
 		}
 
 		for _, resourceGroup := range nextResult.Value {
@@ -98,7 +94,6 @@ func toConfig(secretData map[string][]byte) (config, error) {
 		clientSecret:   string(clientSecret),
 		subscriptionID: string(subscriptionID),
 		tenantID:       string(tenantID),
-		userAgent:      "kyma-environment-broker",
 	}, nil
 }
 
@@ -110,37 +105,3 @@ func newResourceGroupsClient(config config) (*armresources.ResourceGroupsClient,
 
 	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, nil)
 }
-
-// getGroupsClient gets a client for handling of Azure ResourceGroups
-// func getGroupsClient(config *config, authorizer autorest.Authorizer) (resources.GroupsClient, error) {
-// 	client := resources.NewGroupsClient(config.subscriptionID)
-// 	client.Authorizer = authorizer
-
-// 	if err := client.AddToUserAgent(config.userAgent); err != nil {
-// 		return resources.GroupsClient{}, fmt.Errorf("while adding user agent [%s]: %w", config.userAgent, err)
-// 	}
-
-// 	return client, nil
-// }
-
-// func getResourceManagementAuthorizer(config *config, environment *azure.Environment) (autorest.Authorizer, error) {
-// 	armAuthorizer, err := getAuthorizerForResource(config, environment)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("while creating resource authorizer: %w", err)
-// 	}
-
-// 	return armAuthorizer, err
-// }
-
-// func getAuthorizerForResource(config *config, environment *azure.Environment) (autorest.Authorizer, error) {
-// 	oauthConfig, err := adal.NewOAuthConfig(environment.ActiveDirectoryEndpoint, config.tenantID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	token, err := adal.NewServicePrincipalToken(*oauthConfig, config.clientID, config.clientSecret, environment.ResourceManagerEndpoint)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return autorest.NewBearerAuthorizer(token), err
-// }
