@@ -21,13 +21,13 @@ import (
 
 type config struct {
 	Gardener struct {
-		KubeconfigPath string `envconfig:"default=/gardener/kubeconfig"`
+		KubeconfigPath string `envconfig:"default=/Users/i326211/Downloads/kubeconfig-gard-frog-dev.yaml"`
 		Project        string `envconfig:"default="`
 	}
 }
 
 func main() {
-	log.Info("Starting cleanup job, the void patch!")
+	log.Info("Starting cleanup job!")
 	cfg := config{}
 	err := envconfig.InitWithPrefix(&cfg, "APP")
 	exitOnError(err, "Failed to load application config")
