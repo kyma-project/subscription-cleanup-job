@@ -4,15 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/Azure/go-autorest/autorest/adal"
-	"github.com/Azure/go-autorest/autorest/azure"
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	log "github.com/sirupsen/logrus"
 )
 
 type azureResourceCleaner struct {
-	azureClient resources.GroupsClient
+	azureClient *armresources.ResourceGroupsClient
 }
 
 type config struct {
@@ -20,7 +18,6 @@ type config struct {
 	clientSecret   string
 	subscriptionID string
 	tenantID       string
-	userAgent      string
 }
 
 func NewAzureResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, error) {
@@ -41,26 +38,32 @@ func NewAzureResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, er
 
 func (ac azureResourceCleaner) Do() error {
 	ctx := context.Background()
-	resourceGroups, err := ac.azureClient.List(ctx, "", nil)
-	if err != nil {
-		return err
-	}
+	pager := ac.azureClient.NewListPager(nil)
 
-	for _, resourceGroup := range resourceGroups.Values() {
-		if resourceGroup.Name != nil {
-			log.Infof("Deleting resource group '%s'", *resourceGroup.Name)
-			future, err := ac.azureClient.Delete(ctx, *resourceGroup.Name)
-			if err != nil {
-				log.Errorf("failed to init resource group '%s' deletion", *resourceGroup.Name)
-				continue
-			}
+	for pager.More() {
+		nextResult, err := pager.NextPage(ctx)
+		if err != nil {
+			return err
+		}
 
-			err = future.WaitForCompletionRef(ctx, ac.azureClient.Client)
-			if err != nil {
-				log.Errorf("failed to remove resource group '%s', %s: ", *resourceGroup.Name, err.Error())
+		for _, resourceGroup := range nextResult.Value {
+			if resourceGroup.Name != nil {
+				log.Infof("Deleting resource group '%s'", *resourceGroup.Name)
+				future, err := ac.azureClient.BeginDelete(ctx, *resourceGroup.Name, nil)
+				if err != nil {
+					log.Errorf("failed to init resource group '%s' deletion", *resourceGroup.Name)
+					continue
+				}
+
+				_, err = future.PollUntilDone(ctx, nil)
+				if err != nil {
+					log.Errorf("failed to remove resource group '%s', %s: ", *resourceGroup.Name, err.Error())
+				}
 			}
 		}
 	}
+
+	log.Info("Azure resources cleanup finished successfully!")
 
 	return nil
 }
@@ -91,54 +94,14 @@ func toConfig(secretData map[string][]byte) (config, error) {
 		clientSecret:   string(clientSecret),
 		subscriptionID: string(subscriptionID),
 		tenantID:       string(tenantID),
-		userAgent:      "kyma-environment-broker",
 	}, nil
 }
 
-func newResourceGroupsClient(config config) (resources.GroupsClient, error) {
-	azureEnv, err := azure.EnvironmentFromName("AzurePublicCloud") // shouldn't fail
-	if err != nil {
-		return resources.GroupsClient{}, err
-	}
-
-	authorizer, err := getResourceManagementAuthorizer(&config, &azureEnv)
-	if err != nil {
-		return resources.GroupsClient{}, err
-	}
-
-	return getGroupsClient(&config, authorizer)
-}
-
-// getGroupsClient gets a client for handling of Azure ResourceGroups
-func getGroupsClient(config *config, authorizer autorest.Authorizer) (resources.GroupsClient, error) {
-	client := resources.NewGroupsClient(config.subscriptionID)
-	client.Authorizer = authorizer
-
-	if err := client.AddToUserAgent(config.userAgent); err != nil {
-		return resources.GroupsClient{}, fmt.Errorf("while adding user agent [%s]: %w", config.userAgent, err)
-	}
-
-	return client, nil
-}
-
-func getResourceManagementAuthorizer(config *config, environment *azure.Environment) (autorest.Authorizer, error) {
-	armAuthorizer, err := getAuthorizerForResource(config, environment)
-	if err != nil {
-		return nil, fmt.Errorf("while creating resource authorizer: %w", err)
-	}
-
-	return armAuthorizer, err
-}
-
-func getAuthorizerForResource(config *config, environment *azure.Environment) (autorest.Authorizer, error) {
-	oauthConfig, err := adal.NewOAuthConfig(environment.ActiveDirectoryEndpoint, config.tenantID)
+func newResourceGroupsClient(config config) (*armresources.ResourceGroupsClient, error) {
+	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	token, err := adal.NewServicePrincipalToken(*oauthConfig, config.clientID, config.clientSecret, environment.ResourceManagerEndpoint)
-	if err != nil {
-		return nil, err
-	}
-	return autorest.NewBearerAuthorizer(token), err
+	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, nil)
 }
