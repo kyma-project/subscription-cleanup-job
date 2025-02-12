@@ -21,7 +21,7 @@ import (
 
 type config struct {
 	Gardener struct {
-		KubeconfigPath string `envconfig:"default=/Users/i326211/Downloads/kubeconfig-gard-frog-dev.yaml"`
+		KubeconfigPath string `envconfig:"default=/gardener/kubeconfig"`
 		Project        string `envconfig:"default="`
 	}
 }
