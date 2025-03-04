@@ -1,8 +1,8 @@
 module-name: subscription-cleanup-job
-protecode:
+kind: kcp
+bdba:
   - europe-docker.pkg.dev/kyma-project/prod/subscription-cleanup-job:latest
-whitesource:
+mend:
   language: golang-mod
-  subprojects: false
   exclude:
     - "**/*_test.go"
