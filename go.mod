@@ -13,7 +13,7 @@ require (
 	github.com/kyma-project/kyma-environment-broker v0.0.0-20231227095843-e35b81fff501
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
-	github.com/vrischmann/envconfig v1.3.0
+	github.com/vrischmann/envconfig v1.4.1
 	k8s.io/api v0.27.4
 	k8s.io/apimachinery v0.27.7
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
