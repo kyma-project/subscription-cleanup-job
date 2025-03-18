@@ -1,6 +1,8 @@
 module github.com/kyma-project/subscription-cleanup-job
 
-go 1.21
+go 1.23.0
+
+toolchain go1.24.1
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.1
@@ -54,12 +56,12 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.14.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
@@ -76,7 +78,7 @@ require (
 
 replace (
 	golang.org/x/crypto => golang.org/x/crypto v0.31.0
-	golang.org/x/net => golang.org/x/net v0.34.0
+	golang.org/x/net => golang.org/x/net v0.36.0
 	k8s.io/api => k8s.io/api v0.26.10
 	k8s.io/apimachinery => k8s.io/apimachinery v0.26.10
 	k8s.io/client-go => k8s.io/client-go v0.26.10
