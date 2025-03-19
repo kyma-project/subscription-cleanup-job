@@ -56,7 +56,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/crypto v0.35.0 // indirect
+	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.14.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
@@ -78,7 +78,7 @@ require (
 
 replace (
 	golang.org/x/crypto => golang.org/x/crypto v0.36.0
-	golang.org/x/net => golang.org/x/net v0.36.0
+	golang.org/x/net => golang.org/x/net v0.37.0
 	k8s.io/api => k8s.io/api v0.26.10
 	k8s.io/apimachinery => k8s.io/apimachinery v0.26.10
 	k8s.io/client-go => k8s.io/client-go v0.26.10
