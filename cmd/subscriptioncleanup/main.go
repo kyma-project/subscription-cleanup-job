@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"net/http"
 	"net/url"
 
@@ -76,7 +76,7 @@ func HaltIstioSidecar() {
 }
 
 func newClusterConfig(cfg config) (*restclient.Config, error) {
-	rawKubeconfig, err := ioutil.ReadFile(cfg.Gardener.KubeconfigPath)
+	rawKubeconfig, err := os.ReadFile(cfg.Gardener.KubeconfigPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read Gardener Kubeconfig from path %s: %s",
 			cfg.Gardener.KubeconfigPath, err.Error())
