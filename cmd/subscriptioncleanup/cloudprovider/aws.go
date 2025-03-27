@@ -62,7 +62,7 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client ec2.Client) error {
 
 	for _, volume := range volumes.Volumes {
 		if volume.State == types.VolumeStateInUse {
-			return fmt.Errorf(fmt.Sprintf("There is an EC2 instance which uses this volume with id: %v", *volume.VolumeId))
+			return fmt.Errorf("There is an EC2 instance which uses this volume with id: %v", *volume.VolumeId)
 		}
 	}
 

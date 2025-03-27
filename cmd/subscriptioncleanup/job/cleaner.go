@@ -99,7 +99,9 @@ func (p *cleaner) releaseResources(secretBinding unstructured.Unstructured) erro
 }
 
 func (p *cleaner) getBoundSecret(sb unstructured.Unstructured) (*apiv1.Secret, error) {
-	secretBinding := gardener.SecretBinding{sb}
+	secretBinding := gardener.SecretBinding{
+		Unstructured: sb,
+	}
 	secret, err := p.kubernetesInterface.CoreV1().
 		Secrets(secretBinding.GetSecretRefNamespace()).
 		Get(p.context, secretBinding.GetSecretRefName(), metav1.GetOptions{})
@@ -143,7 +145,9 @@ func (p *cleaner) checkIfSecretCanBeReleased(binding unstructured.Unstructured) 
 	}
 
 	for _, sh := range list.Items {
-		shoot := gardener.Shoot{sh}
+		shoot := gardener.Shoot{
+			Unstructured: sh,
+		}
 		if shoot.GetSpecSecretBindingName() == binding.GetName() {
 			return false, nil
 		}
