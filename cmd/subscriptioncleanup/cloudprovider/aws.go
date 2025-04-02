@@ -68,9 +68,9 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client ec2.Client) error {
 
 	for _, volume := range volumes.Volumes {
 		logrus.Printf("Deleting volume with id %v", *volume.VolumeId)
-		ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
-			VolumeId: volume.VolumeId,
-		})
+		// ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
+		// 	VolumeId: volume.VolumeId,
+		// })
 	}
 
 	return nil

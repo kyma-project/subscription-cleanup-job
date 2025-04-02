@@ -49,16 +49,16 @@ func (ac azureResourceCleaner) Do() error {
 		for _, resourceGroup := range nextResult.Value {
 			if resourceGroup.Name != nil {
 				log.Infof("Deleting resource group '%s'", *resourceGroup.Name)
-				future, err := ac.azureClient.BeginDelete(ctx, *resourceGroup.Name, nil)
-				if err != nil {
-					log.Errorf("failed to init resource group '%s' deletion", *resourceGroup.Name)
-					continue
-				}
+				// future, err := ac.azureClient.BeginDelete(ctx, *resourceGroup.Name, nil)
+				// if err != nil {
+				// 	log.Errorf("failed to init resource group '%s' deletion", *resourceGroup.Name)
+				// 	continue
+				// }
 
-				_, err = future.PollUntilDone(ctx, nil)
-				if err != nil {
-					log.Errorf("failed to remove resource group '%s', %s: ", *resourceGroup.Name, err.Error())
-				}
+				// _, err = future.PollUntilDone(ctx, nil)
+				// if err != nil {
+				// 	log.Errorf("failed to remove resource group '%s', %s: ", *resourceGroup.Name, err.Error())
+				// }
 			}
 		}
 	}
