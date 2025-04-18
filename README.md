@@ -28,6 +28,18 @@ If there are shoots assigned to the secret bindings, it will be logged and ignor
 >
 > Make sure nobody is using the subscription (can be a different secret) before running SCJ.
 
+Example correct run with nothing to clean:
+```
+$ APP_GARDENER_PROJECT=frog-dev APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml ./main
+INFO[0000] Starting cleanup job!
+INFO[0000] Started releasing resources
+Please visit the following URL in your browser: http://localhost:8000
+INFO[0020] Finished releasing resources
+INFO[0020] # HALT ISTIO SIDECAR #
+ERRO[0020] unable to send post request to quit Istio sidecar: Post "http://127.0.0.1:15020/quitquitquit": dial tcp 127.0.0.1:15020: connect: connection refused
+INFO[0020] Cleanup job finished successfully!
+```
+
 ## Contributing
 
 See the [Contributing Rules](CONTRIBUTING.md).
