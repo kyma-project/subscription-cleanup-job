@@ -8,6 +8,26 @@ Subscription Cleanup Job is a subcomponent of [Kyma Control Plane](https://githu
 
 For more information on KCP and its components, read the [KCP documentation](https://github.com/kyma-project/control-plane/tree/main/docs) and the [KEB documentation](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs).
 
+## Runnining locally
+
+- download your Gardener Kubeconfig (personal kubeconfig, service account isn't needed)
+- build subscription cleanup job: `go build ./cmd/subscriptioncleanup/main.go`
+- set environmental variables:
+  - `APP_GARDENER_PROJECT=frog-dev`
+  - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
+- run the job: `./main`
+
+SCJ will look for secret bindings in the Gardener with `dirty=true` and `hyperscalerType` labels.
+If `hyperscalerType` is not set, the secret will be logged and ignored.
+If `dirty=true` is not set, the secret will be ignored.
+If there are shoots assigned to the secret bindings, it will be logged and ignored.
+
+> [!CAUTION]
+> SCJ will remove all resources associated with the secret bindings.
+> This will break any existing shoots associated with the subscription.
+>
+> Make sure nobody is using the subscription (can be a different secret) before running SCJ.
+
 ## Contributing
 
 See the [Contributing Rules](CONTRIBUTING.md).
