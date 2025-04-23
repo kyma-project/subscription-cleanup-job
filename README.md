@@ -8,27 +8,28 @@ Subscription Cleanup Job is a subcomponent of [Kyma Control Plane](https://githu
 
 For more information on KCP and its components, read the [KCP documentation](https://github.com/kyma-project/control-plane/tree/main/docs) and the [KEB documentation](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs).
 
-## Runnining locally
+## Run SCJ Locally
 
-- download your Gardener Kubeconfig (personal kubeconfig, service account isn't needed)
-- build subscription cleanup job: `go build ./cmd/subscriptioncleanup/main.go`
-- set environmental variables:
-  - `APP_GARDENER_PROJECT=frog-dev`
-  - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
-- run the job: `./main`
+1. Download your personal Gardener kubeconfig. A service account isn't required.
+2. To build an SCJ, run: `go build ./cmd/subscriptioncleanup/main.go`.
+3. Set the environmental variables:
+   - `APP_GARDENER_PROJECT=frog-dev`
+   - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
+4. Run the job: `./main`.
 
-SCJ will look for secret bindings in the Gardener with `dirty=true` and `hyperscalerType` labels.
-If `hyperscalerType` is not set, the secret will be logged and ignored.
-If `dirty=true` is not set, the secret will be ignored.
-If there are shoots assigned to the secret bindings, it will be logged and ignored.
+SCJ searches Gardener for secret bindings with `dirty=true` and `hyperscalerType` labels.
+If `hyperscalerType` is not set, the Secret is logged and ignored.
+If `dirty=true` is not set, the Secret is ignored.
+If there are shoots assigned to the secret bindings, the Secret is logged and ignored.
 
 > [!CAUTION]
-> SCJ will remove all resources associated with the secret bindings.
-> This will break any existing shoots associated with the subscription.
+> SCJ removes all resources associated with the secret bindings.
+> This causes breaking any existing shoots associated with the subscription.
 >
-> Make sure nobody is using the subscription (can be a different secret) before running SCJ.
+> Before running SCJ, ensure nobody is using the subscription and multiple Secrets are not assigned to the subscription.
 
-Example correct run with no dirty secrets:
+See an example of a correct run with no dirty Secrets:
+
 ```
 $ APP_GARDENER_PROJECT=frog-dev APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml ./main
 INFO[0000] Starting cleanup job!
@@ -40,7 +41,7 @@ ERRO[0020] unable to send post request to quit Istio sidecar: Post "http://127.0
 INFO[0020] Cleanup job finished successfully!
 ```
 
-Example correct run after `k label secretbindings/gardener-secret dirty=true` (no resources to delete):
+See an example of a correct run after `k label secretbindings/gardener-secret dirty=true` with no resources to delete:
 ```
 $ APP_GARDENER_PROJECT=frog-dev APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml ./main
 INFO[0000] Starting cleanup job!
