@@ -4,20 +4,20 @@
 
 ## Overview
 
-Subscription Cleanup Job is a subcomponent of [Kyma Control Plane](https://github.com/kyma-project/control-plane) for the cleanup of managed subscriptions from [Hyperscaler Account Pool (HAP)](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs/contributor/03-10-hyperscaler-account-pool.md).
+Subscription Cleanup Job (SCJ) is a subcomponent of [Kyma Control Plane](https://github.com/kyma-project/control-plane) for the cleanup of managed subscriptions from [Hyperscaler Account Pool (HAP)](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs/contributor/03-10-hyperscaler-account-pool.md).
 
 For more information on KCP and its components, read the [KCP documentation](https://github.com/kyma-project/control-plane/tree/main/docs) and the [KEB documentation](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs).
 
 ## Run SCJ Locally
 
-1. Download your personal Gardener kubeconfig. A service account isn't required.
+1. Download your Gardener kubeconfig. It can be a personal kubeconfig; a service account isn't required.
 2. To build an SCJ, run: `go build ./cmd/subscriptioncleanup/main.go`.
 3. Set the environmental variables:
    - `APP_GARDENER_PROJECT=frog-dev`
    - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
 4. Run the job: `./main`.
 
-SCJ searches Gardener for secret bindings with `dirty=true` and `hyperscalerType` labels.
+SCJ searches the Gardener instance for secret bindings with `dirty=true` and `hyperscalerType` labels.
 If `hyperscalerType` is not set, the Secret is logged and ignored.
 If `dirty=true` is not set, the Secret is ignored.
 If there are shoots assigned to the secret bindings, the Secret is logged and ignored.
