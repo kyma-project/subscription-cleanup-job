@@ -12,8 +12,8 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/vrischmann/envconfig v1.4.1
-	k8s.io/api v0.33.1
-	k8s.io/apimachinery v0.33.1
+	k8s.io/api v0.33.3
+	k8s.io/apimachinery v0.33.3
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
 )
 
@@ -74,8 +74,8 @@ require (
 
 replace (
 	golang.org/x/crypto => golang.org/x/crypto v0.37.0
-	k8s.io/api => k8s.io/api v0.33.1
-	k8s.io/apimachinery => k8s.io/apimachinery v0.33.1
-	k8s.io/client-go => k8s.io/client-go v0.33.1
-	k8s.io/kubectl => k8s.io/kubectl v0.33.1
+	k8s.io/api => k8s.io/api v0.33.3
+	k8s.io/apimachinery => k8s.io/apimachinery v0.33.3
+	k8s.io/client-go => k8s.io/client-go v0.33.3
+	k8s.io/kubectl => k8s.io/kubectl v0.33.3
 )
