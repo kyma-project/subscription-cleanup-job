@@ -1,6 +1,6 @@
 module github.com/kyma-project/subscription-cleanup-job
 
-go 1.24.2
+go 1.24.5
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.2
