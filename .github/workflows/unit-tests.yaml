@@ -22,4 +22,11 @@ jobs:
         run: go build -v ./...
 
       - name: Test
-        run: go test -v ./...
+        run: go test -coverprofile cover.out -v ./...
+
+      - name: coveralls github action
+        uses: coverallsapp/github-action@v2.3.6
+        with:
+          format: golang
+          file: ./cover.out
+          fail-on-error: false
