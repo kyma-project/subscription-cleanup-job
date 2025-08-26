@@ -1,4 +1,6 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/kyma-project/subscription-cleanup-job)](https://api.reuse.software/info/github.com/kyma-project/subscription-cleanup-job)
+[![unit tests](https://github.com/kyma-project/subscription-cleanup-job/actions/workflows/unit-tests.yaml/badge.svg)](https://github.com/kyma-project/subscription-cleanup-job/actions/workflows/unit-tests.yaml)
+[![Coverage Status](https://coveralls.io/repos/github/kyma-project/subscription-cleanup-job/badge.svg)](https://coveralls.io/github/kyma-project/subscription-cleanup-job)
 
 # Kyma Control Plane - Subscription Cleanup Job
 
