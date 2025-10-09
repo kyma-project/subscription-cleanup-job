@@ -14,7 +14,7 @@ require (
 	github.com/vrischmann/envconfig v1.4.1
 	k8s.io/api v0.34.1
 	k8s.io/apimachinery v0.34.1
-	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
+	k8s.io/client-go 8de342516c3d
 )
 
 require (
