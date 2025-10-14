@@ -58,7 +58,7 @@ errcheck-local: ;
 # 		$(DOCKER_CREATE_OPTS) errcheck -blank -asserts -ignorepkg '$$($(DIRS_TO_CHECK) | tr '\n' ',')' -ignoregenerated ./...
 
 test-integration-local:
-	go test ./... -tags=integration
+	GOFIPS140=v1.0.0 go test ./... -tags=integration
 
 test-integration:
 	@echo make test-integration-local
@@ -85,4 +85,4 @@ clean-up:
 
 .PHONY: test
 test:
-	go test ./...
+	GOFIPS140=v1.0.0 go test ./...
