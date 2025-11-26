@@ -35,6 +35,10 @@ func (pf *providerFactory) New(hyperscalerType model.HyperscalerType, secretData
 		{
 			return NewAwsResourcesCleaner(secretData)
 		}
+	case model.Alicloud:
+		{
+			return NewAliCloudResourcesCleaner(secretData), nil
+		}
 	default:
 		return nil, fmt.Errorf("unknown hyperscaler type")
 	}

@@ -5,9 +5,10 @@ import "fmt"
 type HyperscalerType string
 
 const (
-	GCP   HyperscalerType = "gcp"
-	Azure HyperscalerType = "azure"
-	AWS   HyperscalerType = "aws"
+	GCP      HyperscalerType = "gcp"
+	Azure    HyperscalerType = "azure"
+	AWS      HyperscalerType = "aws"
+	Alicloud HyperscalerType = "alicloud"
 )
 
 func NewHyperscalerType(provider string) (HyperscalerType, error) {
@@ -15,7 +16,7 @@ func NewHyperscalerType(provider string) (HyperscalerType, error) {
 	hyperscalerType := HyperscalerType(provider)
 
 	switch hyperscalerType {
-	case GCP, Azure, AWS:
+	case GCP, Azure, AWS, Alicloud:
 		return hyperscalerType, nil
 	case "gcp_cf-sa30":
 		return GCP, nil
