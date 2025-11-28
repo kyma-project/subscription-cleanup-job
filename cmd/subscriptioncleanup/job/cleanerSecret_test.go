@@ -67,7 +67,7 @@ func TestCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCleaner(context.Background(), mockClient, mockSecretBindings, mockShoots, providerFactory)
+		cleaner := NewSecretBindingCleaner(context.Background(), mockClient, mockSecretBindings, mockShoots, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -138,7 +138,7 @@ func TestCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCleaner(context.Background(), mockClient, mockSecretBindings, mockShoots, providerFactory)
+		cleaner := NewSecretBindingCleaner(context.Background(), mockClient, mockSecretBindings, mockShoots, providerFactory)
 
 		//when
 		err := cleaner.Do()
