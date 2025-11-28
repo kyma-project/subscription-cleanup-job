@@ -21,13 +21,13 @@ type Cleaner interface {
 	Do() error
 }
 
-func NewCleaner(context context.Context,
+func NewSecretBindingCleaner(context context.Context,
 	kubernetesInterface kubernetes.Interface,
 	secretBindingsClient dynamic.ResourceInterface,
 	shootClient dynamic.ResourceInterface,
 	providerFactory cloudprovider.ProviderFactory) Cleaner {
 
-	return &cleaner{
+	return &secretBindingCleaner{
 		kubernetesInterface:  kubernetesInterface,
 		secretBindingsClient: secretBindingsClient,
 		providerFactory:      providerFactory,
@@ -36,7 +36,7 @@ func NewCleaner(context context.Context,
 	}
 }
 
-type cleaner struct {
+type secretBindingCleaner struct {
 	kubernetesInterface  kubernetes.Interface
 	secretBindingsClient dynamic.ResourceInterface
 	providerFactory      cloudprovider.ProviderFactory
@@ -44,7 +44,7 @@ type cleaner struct {
 	context              context.Context
 }
 
-func (p *cleaner) Do() error {
+func (p *secretBindingCleaner) Do() error {
 	logrus.Info("Started releasing resources")
 	secretBindings, err := p.getSecretBindingsToRelease()
 	if err != nil {
@@ -62,7 +62,7 @@ func (p *cleaner) Do() error {
 			continue
 		}
 
-		err = p.releaseResources(secretBinding)
+		err = p.releaseSecretBindingResources(secretBinding)
 		if err != nil {
 			logrus.Errorf("Failed to release resources for '%s' secret binding: %s", secretBinding.GetName(), err.Error())
 			continue
@@ -79,7 +79,7 @@ func (p *cleaner) Do() error {
 	return nil
 }
 
-func (p *cleaner) releaseResources(secretBinding unstructured.Unstructured) error {
+func (p *secretBindingCleaner) releaseSecretBindingResources(secretBinding unstructured.Unstructured) error {
 	hyperscalerType, err := model.NewHyperscalerType(secretBinding.GetLabels()["hyperscalerType"])
 	if err != nil {
 		return fmt.Errorf("starting releasing resources: %w", err)
@@ -98,7 +98,7 @@ func (p *cleaner) releaseResources(secretBinding unstructured.Unstructured) erro
 	return cleaner.Do()
 }
 
-func (p *cleaner) getBoundSecret(sb unstructured.Unstructured) (*apiv1.Secret, error) {
+func (p *secretBindingCleaner) getBoundSecret(sb unstructured.Unstructured) (*apiv1.Secret, error) {
 	secretBinding := gardener.SecretBinding{
 		Unstructured: sb,
 	}
@@ -112,7 +112,7 @@ func (p *cleaner) getBoundSecret(sb unstructured.Unstructured) (*apiv1.Secret, e
 	return secret, nil
 }
 
-func (p *cleaner) returnSecretBindingToThePool(secretBinding unstructured.Unstructured) error {
+func (p *secretBindingCleaner) returnSecretBindingToThePool(secretBinding unstructured.Unstructured) error {
 	sb, err := p.secretBindingsClient.Get(p.context, secretBinding.GetName(), metav1.GetOptions{})
 	if err != nil {
 		return err
@@ -131,14 +131,14 @@ func (p *cleaner) returnSecretBindingToThePool(secretBinding unstructured.Unstru
 	return nil
 }
 
-func (p *cleaner) getSecretBindingsToRelease() ([]unstructured.Unstructured, error) {
+func (p *secretBindingCleaner) getSecretBindingsToRelease() ([]unstructured.Unstructured, error) {
 	labelSelector := fmt.Sprintf("dirty=true")
 
 	return getSecretBindings(p.context, p.secretBindingsClient, labelSelector)
 }
 
 // Checks if there are no clusters tied to the secret binding
-func (p *cleaner) checkIfSecretCanBeReleased(binding unstructured.Unstructured) (bool, error) {
+func (p *secretBindingCleaner) checkIfSecretCanBeReleased(binding unstructured.Unstructured) (bool, error) {
 	list, err := p.shootClient.List(p.context, metav1.ListOptions{})
 	if err != nil {
 		return false, fmt.Errorf("failed to list shoots: %w", err)
