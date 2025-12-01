@@ -52,6 +52,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"name":      "credential-secret1",
 					"namespace": namespace,
 				},
+				"provider": map[string]interface{}{
+					"type": "azure",
+				},
 			},
 		}
 		credentialBinding.SetGroupVersionKind(credentialBindingGVK)
@@ -109,6 +112,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"kind":      "Secret",
 					"name":      "credential-secret1",
 					"namespace": namespace,
+				},
+				"provider": map[string]interface{}{
+					"type": "azure",
 				},
 			},
 		}
@@ -195,6 +201,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"name":      "credential-secret1",
 					"namespace": namespace,
 				},
+				"provider": map[string]interface{}{
+					"type": "azure",
+				},
 			},
 		}
 		credentialBinding1.SetGroupVersionKind(credentialBindingGVK)
@@ -214,6 +223,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"kind":      "Secret",
 					"name":      "credential-secret2",
 					"namespace": namespace,
+				},
+				"provider": map[string]interface{}{
+					"type": "azure",
 				},
 			},
 		}
@@ -290,6 +302,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"name":      "credential-secret-gcp",
 					"namespace": namespace,
 				},
+				"provider": map[string]interface{}{
+					"type": "gcp",
+				},
 			},
 		}
 		credentialBinding.SetGroupVersionKind(credentialBindingGVK)
@@ -356,6 +371,9 @@ func TestCredentialCleanerJob(t *testing.T) {
 					"kind":      "ConfigMap",
 					"name":      "some-configmap",
 					"namespace": namespace,
+				},
+				"provider": map[string]interface{}{
+					"type": "azure",
 				},
 			},
 		}

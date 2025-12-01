@@ -109,7 +109,12 @@ func (p *credentialCleaner) checkIfCredentialCanBeReleased(binding unstructured.
 }
 
 func (p *credentialCleaner) releaseCredentialBindingResources(credentialBinding unstructured.Unstructured) error {
-	hyperscalerType, err := model.NewHyperscalerType(credentialBinding.GetLabels()["hyperscalerType"])
+	providerType, ok, err := unstructured.NestedString(credentialBinding.Object, "provider", "type")
+	if err != nil || !ok {
+		return fmt.Errorf("provider.type field not found or invalid")
+	}
+
+	hyperscalerType, err := model.NewHyperscalerType(providerType)
 	if err != nil {
 		return err
 	}
