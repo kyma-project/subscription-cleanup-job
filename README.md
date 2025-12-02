@@ -17,6 +17,7 @@ For more information on KCP and its components, read the [KCP documentation](htt
 3. Set the environmental variables:
    - `APP_GARDENER_PROJECT=frog-dev`
    - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
+   - `APP_CLEAN_CREDENTIAL_BINDINGS=true` (optional, default: `false`)
 4. Run the job: `./main`.
 
 SCJ searches the Gardener instance for secret bindings with `dirty=true` and `hyperscalerType` labels.
