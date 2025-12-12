@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.274.0
 	github.com/gardener/gardener v1.132.1
-	github.com/kyma-project/kyma-environment-broker v0.0.0-20251124115756-ec0f8949d416
+	github.com/kyma-project/kyma-environment-broker e9b2f76e7371
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
 	github.com/vrischmann/envconfig v1.4.1
