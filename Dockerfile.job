@@ -20,7 +20,7 @@ RUN go mod download
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} GOFIPS140=v1.0.0 go build -a -o /bin/main ./cmd/subscriptioncleanup/main.go
 
 # Get latest CA certs
-FROM alpine:latest AS certs
+FROM --platform=$BUILDPLATFORM alpine:latest AS certs
 RUN apk --update add ca-certificates
 
 # Final image
