@@ -15,7 +15,7 @@ type ProviderFactory struct {
 }
 
 // New provides a mock function with given fields: hyperscalerType, secretData
-func (_m *ProviderFactory) New(hyperscalerType model.HyperscalerType, secretData map[string][]byte) (cloudprovider.ResourceCleaner, error) {
+func (_m *ProviderFactory) New(hyperscalerType model.HyperscalerType, secretData map[string][]byte, market model.Market) (cloudprovider.ResourceCleaner, error) {
 	ret := _m.Called(hyperscalerType, secretData)
 
 	var r0 cloudprovider.ResourceCleaner
