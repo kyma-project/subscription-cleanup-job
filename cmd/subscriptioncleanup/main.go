@@ -26,7 +26,6 @@ type config struct {
 		Project        string `envconfig:"default="`
 	}
 	CleanCredentialBindings bool         `envconfig:"default=false"`
-	IsChineseRegion         bool         `envconfig:"default=false"`
 	Market                  model.Market `envconfig:"default=global"`
 }
 
