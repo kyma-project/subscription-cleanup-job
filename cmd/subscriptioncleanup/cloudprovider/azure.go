@@ -29,7 +29,7 @@ func NewAzureResourcesCleaner(secretData map[string][]byte, market model.Market)
 		return nil, err
 	}
 
-	azureClient, err := newResourceGroupsClient(config, market)
+	azureClient, err := NewResourceGroupsClient(config, market)
 	if err != nil {
 		return nil, err
 	}
@@ -100,14 +100,8 @@ func toConfig(secretData map[string][]byte) (config, error) {
 	}, nil
 }
 
-func newResourceGroupsClient(config config, market model.Market) (*armresources.ResourceGroupsClient, error) {
-	var credentialOptions *azidentity.ClientSecretCredentialOptions
-
-	if market == model.ChineseMarket {
-		credentialOptions = &azidentity.ClientSecretCredentialOptions{
-			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
-		}
-	}
+func NewResourceGroupsClient(config config, market model.Market) (*armresources.ResourceGroupsClient, error) {
+	credentialOptions := GetClientSecretCredentialOptions(market)
 
 	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, credentialOptions)
 	if err != nil {
@@ -115,4 +109,15 @@ func newResourceGroupsClient(config config, market model.Market) (*armresources.
 	}
 
 	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, nil)
+}
+
+func GetClientSecretCredentialOptions(market model.Market) *azidentity.ClientSecretCredentialOptions {
+	var credentialOptions *azidentity.ClientSecretCredentialOptions
+
+	if market == model.ChineseMarket {
+		credentialOptions = &azidentity.ClientSecretCredentialOptions{
+			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
+		}
+	}
+	return credentialOptions
 }
