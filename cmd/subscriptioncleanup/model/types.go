@@ -23,3 +23,10 @@ func NewHyperscalerType(provider string) (HyperscalerType, error) {
 	}
 	return "", fmt.Errorf("unknown Hyperscaler provider type: %s", provider)
 }
+
+type Market string
+
+const (
+	GlobalMarket  Market = "global"
+	ChineseMarket Market = "chinese"
+)

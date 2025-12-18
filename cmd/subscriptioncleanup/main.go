@@ -25,6 +25,7 @@ type config struct {
 		Project        string `envconfig:"default="`
 	}
 	CleanCredentialBindings bool `envconfig:"default=false"`
+	IsChineseRegion         bool `envconfig:"default=false"`
 }
 
 func main() {
@@ -49,11 +50,11 @@ func main() {
 	if cfg.CleanCredentialBindings {
 		log.Info("Cleaning Credential Bindings")
 		credentialBindingInterface := gardenerClient.Resource(gardener.CredentialsBindingResource).Namespace(gardenerNamespace)
-		cleaner = job.NewCredentialBindingCleaner(context.Background(), kubernetesInterface, credentialBindingInterface, shootInterface, cloudprovider.NewProviderFactory())
+		cleaner = job.NewCredentialBindingCleaner(context.Background(), kubernetesInterface, credentialBindingInterface, shootInterface, cfg.IsChineseRegion, cloudprovider.NewProviderFactory())
 	} else {
 		log.Info("Cleaning Secret Bindings")
 		secretBindingInterface := gardenerClient.Resource(gardener.SecretBindingResource).Namespace(gardenerNamespace)
-		cleaner = job.NewSecretBindingCleaner(context.Background(), kubernetesInterface, secretBindingInterface, shootInterface, cloudprovider.NewProviderFactory())
+		cleaner = job.NewSecretBindingCleaner(context.Background(), kubernetesInterface, secretBindingInterface, shootInterface, cfg.IsChineseRegion, cloudprovider.NewProviderFactory())
 	}
 	err = cleaner.Do()
 	HaltIstioSidecar()

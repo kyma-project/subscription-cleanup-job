@@ -69,7 +69,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, false, providerFactory)
 
 		//when
 		err := cleaner.Do()

@@ -3,6 +3,8 @@ package cloudprovider
 import (
 	"context"
 	"fmt"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
@@ -20,13 +22,13 @@ type config struct {
 	tenantID       string
 }
 
-func NewAzureResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, error) {
+func NewAzureResourcesCleaner(secretData map[string][]byte, isChineseRegion bool) (ResourceCleaner, error) {
 	config, err := toConfig(secretData)
 	if err != nil {
 		return nil, err
 	}
 
-	azureClient, err := newResourceGroupsClient(config)
+	azureClient, err := newResourceGroupsClient(config, isChineseRegion)
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +99,16 @@ func toConfig(secretData map[string][]byte) (config, error) {
 	}, nil
 }
 
-func newResourceGroupsClient(config config) (*armresources.ResourceGroupsClient, error) {
-	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, nil)
+func newResourceGroupsClient(config config, isChineseRegion bool) (*armresources.ResourceGroupsClient, error) {
+	var credentialOptions *azidentity.ClientSecretCredentialOptions
+
+	if isChineseRegion {
+		credentialOptions = &azidentity.ClientSecretCredentialOptions{
+			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
+		}
+	}
+
+	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, credentialOptions)
 	if err != nil {
 		return nil, err
 	}
