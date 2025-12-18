@@ -19,7 +19,7 @@ func NewCredentialBindingCleaner(context context.Context,
 	kubernetesInterface kubernetes.Interface,
 	credentialBindingsClient dynamic.ResourceInterface,
 	shootClient dynamic.ResourceInterface,
-	isChineseRegion bool,
+	market model.Market,
 	providerFactory cloudprovider.ProviderFactory) Cleaner {
 
 	return &credentialCleaner{
@@ -28,7 +28,7 @@ func NewCredentialBindingCleaner(context context.Context,
 		providerFactory:          providerFactory,
 		shootClient:              shootClient,
 		context:                  context,
-		isChineseRegion:          isChineseRegion,
+		market:                   market,
 	}
 }
 
@@ -36,9 +36,9 @@ type credentialCleaner struct {
 	kubernetesInterface      kubernetes.Interface
 	credentialBindingsClient dynamic.ResourceInterface
 	providerFactory          cloudprovider.ProviderFactory
-	isChineseRegion          bool
 	shootClient              dynamic.ResourceInterface
 	context                  context.Context
+	market                   model.Market
 }
 
 func (p *credentialCleaner) Do() error {
@@ -59,7 +59,7 @@ func (p *credentialCleaner) Do() error {
 			continue
 		}
 
-		err = p.releaseCredentialBindingResources(credentialBinding, p.isChineseRegion)
+		err = p.releaseCredentialBindingResources(credentialBinding, p.market)
 		if err != nil {
 			logrus.Errorf("Failed to release resources for '%s' credential binding: %s", credentialBinding.GetName(), err.Error())
 			continue
@@ -111,7 +111,7 @@ func (p *credentialCleaner) checkIfCredentialCanBeReleased(binding unstructured.
 	return true, nil
 }
 
-func (p *credentialCleaner) releaseCredentialBindingResources(credentialBinding unstructured.Unstructured, isChineseRegion bool) error {
+func (p *credentialCleaner) releaseCredentialBindingResources(credentialBinding unstructured.Unstructured, market model.Market) error {
 	providerType, ok, err := unstructured.NestedString(credentialBinding.Object, "provider", "type")
 	if err != nil || !ok {
 		return fmt.Errorf("provider.type field not found or invalid")
@@ -127,7 +127,7 @@ func (p *credentialCleaner) releaseCredentialBindingResources(credentialBinding 
 		return fmt.Errorf("getting referenced secret: %w", err)
 	}
 
-	cleaner, err := p.providerFactory.New(hyperscalerType, secret.Data, isChineseRegion)
+	cleaner, err := p.providerFactory.New(hyperscalerType, secret.Data, market)
 	if err != nil {
 		return fmt.Errorf("initializing cloud provider cleaner: %w", err)
 	}

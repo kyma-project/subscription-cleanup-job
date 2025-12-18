@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
+	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
@@ -22,13 +23,13 @@ type config struct {
 	tenantID       string
 }
 
-func NewAzureResourcesCleaner(secretData map[string][]byte, isChineseRegion bool) (ResourceCleaner, error) {
+func NewAzureResourcesCleaner(secretData map[string][]byte, market model.Market) (ResourceCleaner, error) {
 	config, err := toConfig(secretData)
 	if err != nil {
 		return nil, err
 	}
 
-	azureClient, err := newResourceGroupsClient(config, isChineseRegion)
+	azureClient, err := newResourceGroupsClient(config, market)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +100,10 @@ func toConfig(secretData map[string][]byte) (config, error) {
 	}, nil
 }
 
-func newResourceGroupsClient(config config, isChineseRegion bool) (*armresources.ResourceGroupsClient, error) {
+func newResourceGroupsClient(config config, market model.Market) (*armresources.ResourceGroupsClient, error) {
 	var credentialOptions *azidentity.ClientSecretCredentialOptions
 
-	if isChineseRegion {
+	if market == model.ChineseMarket {
 		credentialOptions = &azidentity.ClientSecretCredentialOptions{
 			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
 		}

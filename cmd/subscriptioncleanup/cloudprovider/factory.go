@@ -11,7 +11,7 @@ type ResourceCleaner interface {
 
 //go:generate mockery --name=ProviderFactory
 type ProviderFactory interface {
-	New(hyperscalerType model.HyperscalerType, secretData map[string][]byte, isChineseRegion bool) (ResourceCleaner, error)
+	New(hyperscalerType model.HyperscalerType, secretData map[string][]byte, market model.Market) (ResourceCleaner, error)
 }
 
 type providerFactory struct{}
@@ -20,7 +20,7 @@ func NewProviderFactory() ProviderFactory {
 	return &providerFactory{}
 }
 
-func (pf *providerFactory) New(hyperscalerType model.HyperscalerType, secretData map[string][]byte, isChineseRegion bool) (ResourceCleaner, error) {
+func (pf *providerFactory) New(hyperscalerType model.HyperscalerType, secretData map[string][]byte, market model.Market) (ResourceCleaner, error) {
 	switch hyperscalerType {
 	case model.GCP:
 		{
@@ -28,7 +28,7 @@ func (pf *providerFactory) New(hyperscalerType model.HyperscalerType, secretData
 		}
 	case model.Azure:
 		{
-			return NewAzureResourcesCleaner(secretData, isChineseRegion)
+			return NewAzureResourcesCleaner(secretData, market)
 		}
 	case model.AWS:
 		{

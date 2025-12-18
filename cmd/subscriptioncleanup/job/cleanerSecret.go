@@ -25,7 +25,7 @@ func NewSecretBindingCleaner(context context.Context,
 	kubernetesInterface kubernetes.Interface,
 	secretBindingsClient dynamic.ResourceInterface,
 	shootClient dynamic.ResourceInterface,
-	isChineseRegion bool,
+	market model.Market,
 	providerFactory cloudprovider.ProviderFactory) Cleaner {
 
 	return &secretBindingCleaner{
@@ -34,7 +34,7 @@ func NewSecretBindingCleaner(context context.Context,
 		providerFactory:      providerFactory,
 		shootClient:          shootClient,
 		context:              context,
-		isChineseRegion:      isChineseRegion,
+		market:               market,
 	}
 }
 
@@ -44,7 +44,7 @@ type secretBindingCleaner struct {
 	providerFactory      cloudprovider.ProviderFactory
 	shootClient          dynamic.ResourceInterface
 	context              context.Context
-	isChineseRegion      bool
+	market               model.Market
 }
 
 func (p *secretBindingCleaner) Do() error {
@@ -65,7 +65,7 @@ func (p *secretBindingCleaner) Do() error {
 			continue
 		}
 
-		err = p.releaseSecretBindingResources(secretBinding, p.isChineseRegion)
+		err = p.releaseSecretBindingResources(secretBinding, p.market)
 		if err != nil {
 			logrus.Errorf("Failed to release resources for '%s' secret binding: %s", secretBinding.GetName(), err.Error())
 			continue
@@ -82,7 +82,7 @@ func (p *secretBindingCleaner) Do() error {
 	return nil
 }
 
-func (p *secretBindingCleaner) releaseSecretBindingResources(secretBinding unstructured.Unstructured, isChineseRegion bool) error {
+func (p *secretBindingCleaner) releaseSecretBindingResources(secretBinding unstructured.Unstructured, market model.Market) error {
 	hyperscalerType, err := model.NewHyperscalerType(secretBinding.GetLabels()["hyperscalerType"])
 	if err != nil {
 		return fmt.Errorf("starting releasing resources: %w", err)
@@ -93,7 +93,7 @@ func (p *secretBindingCleaner) releaseSecretBindingResources(secretBinding unstr
 		return fmt.Errorf("getting referenced secret: %w", err)
 	}
 
-	cleaner, err := p.providerFactory.New(hyperscalerType, secret.Data, isChineseRegion)
+	cleaner, err := p.providerFactory.New(hyperscalerType, secret.Data, market)
 	if err != nil {
 		return fmt.Errorf("initializing cloud provider cleaner: %w", err)
 	}

@@ -30,3 +30,13 @@ const (
 	GlobalMarket  Market = "global"
 	ChineseMarket Market = "chinese"
 )
+
+func (e Market) IsValid() bool {
+	switch e {
+	case GlobalMarket, ChineseMarket:
+		return true
+	}
+	return false
+}
+
+func (e Market) String() string { return string(e) }
