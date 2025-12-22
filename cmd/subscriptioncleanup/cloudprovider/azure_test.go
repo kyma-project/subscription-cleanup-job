@@ -37,12 +37,17 @@ func TestNewAzureResourcesCleaner_WithMarket(t *testing.T) {
 
 func TestGetClientSecretCredentialOptions(t *testing.T) {
 	// Global market should return nil options (use default Azure cloud)
-	optsGlobal := GetClientSecretCredentialOptions(model.GlobalMarket)
-	assert.Nil(t, optsGlobal)
+	optsCredsGlobal, optsClientGlobal := GetClientSecretCredentialAndClientOptions(model.GlobalMarket)
+	assert.Nil(t, optsCredsGlobal)
+	assert.Nil(t, optsClientGlobal)
 
-	// Chinese market should return an options struct configured for Azure China
-	optsChina := GetClientSecretCredentialOptions(model.ChineseMarket)
-	if assert.NotNil(t, optsChina) {
-		assert.Equal(t, cloud.AzureChina, optsChina.ClientOptions.Cloud)
+	// Chinese market should return an options structs configured for Azure China
+	optsCredChina, optsCliChina := GetClientSecretCredentialAndClientOptions(model.ChineseMarket)
+	if assert.NotNil(t, optsCredChina) {
+		assert.Equal(t, cloud.AzureChina, optsCredChina.ClientOptions.Cloud)
+	}
+
+	if assert.NotNil(t, optsCliChina) {
+		assert.Equal(t, cloud.AzureChina, optsCliChina.ClientOptions.Cloud)
 	}
 }

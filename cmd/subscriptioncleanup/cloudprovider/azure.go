@@ -3,6 +3,8 @@ package cloudprovider
 import (
 	"context"
 	"fmt"
+
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/arm"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
 	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
@@ -101,23 +103,29 @@ func toConfig(secretData map[string][]byte) (config, error) {
 }
 
 func NewResourceGroupsClient(config config, market model.Market) (*armresources.ResourceGroupsClient, error) {
-	credentialOptions := GetClientSecretCredentialOptions(market)
+	credentialOptions, clientOptions := GetClientSecretCredentialAndClientOptions(market)
 
 	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, credentialOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, nil)
+	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, clientOptions)
 }
 
-func GetClientSecretCredentialOptions(market model.Market) *azidentity.ClientSecretCredentialOptions {
+func GetClientSecretCredentialAndClientOptions(market model.Market) (*azidentity.ClientSecretCredentialOptions, *arm.ClientOptions) {
 	var credentialOptions *azidentity.ClientSecretCredentialOptions
+	var clientOptions *arm.ClientOptions
 
 	if market == model.ChineseMarket {
 		credentialOptions = &azidentity.ClientSecretCredentialOptions{
+			ClientOptions:            policy.ClientOptions{Cloud: cloud.AzureChina},
+			DisableInstanceDiscovery: true, // Recommended for sovereign clouds
+		}
+		clientOptions = &arm.ClientOptions{
 			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
 		}
+
 	}
-	return credentialOptions
+	return credentialOptions, clientOptions
 }
