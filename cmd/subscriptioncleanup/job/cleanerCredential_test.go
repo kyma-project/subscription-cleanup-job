@@ -69,7 +69,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -144,7 +144,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -255,7 +255,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -319,7 +319,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 		providerFactory := &mocks.ProviderFactory{}
 		providerFactory.On("New", model.GCP, mock.Anything).Return(resCleaner, nil)
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -344,7 +344,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 
 		providerFactory := &mocks.ProviderFactory{}
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()
@@ -387,7 +387,7 @@ func TestCredentialCleanerJob(t *testing.T) {
 
 		providerFactory := &mocks.ProviderFactory{}
 
-		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, providerFactory)
+		cleaner := NewCredentialBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
 
 		//when
 		err := cleaner.Do()

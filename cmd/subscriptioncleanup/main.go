@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,7 +25,8 @@ type config struct {
 		KubeconfigPath string `envconfig:"default=/gardener/kubeconfig"`
 		Project        string `envconfig:"default="`
 	}
-	CleanCredentialBindings bool `envconfig:"default=false"`
+	CleanCredentialBindings bool         `envconfig:"default=false"`
+	Market                  model.Market `envconfig:"default=global"`
 }
 
 func main() {
@@ -49,11 +51,11 @@ func main() {
 	if cfg.CleanCredentialBindings {
 		log.Info("Cleaning Credential Bindings")
 		credentialBindingInterface := gardenerClient.Resource(gardener.CredentialsBindingResource).Namespace(gardenerNamespace)
-		cleaner = job.NewCredentialBindingCleaner(context.Background(), kubernetesInterface, credentialBindingInterface, shootInterface, cloudprovider.NewProviderFactory())
+		cleaner = job.NewCredentialBindingCleaner(context.Background(), kubernetesInterface, credentialBindingInterface, shootInterface, cfg.Market, cloudprovider.NewProviderFactory())
 	} else {
 		log.Info("Cleaning Secret Bindings")
 		secretBindingInterface := gardenerClient.Resource(gardener.SecretBindingResource).Namespace(gardenerNamespace)
-		cleaner = job.NewSecretBindingCleaner(context.Background(), kubernetesInterface, secretBindingInterface, shootInterface, cloudprovider.NewProviderFactory())
+		cleaner = job.NewSecretBindingCleaner(context.Background(), kubernetesInterface, secretBindingInterface, shootInterface, cfg.Market, cloudprovider.NewProviderFactory())
 	}
 	err = cleaner.Do()
 	HaltIstioSidecar()

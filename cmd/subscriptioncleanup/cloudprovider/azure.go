@@ -4,6 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/arm"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/cloud"
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore/policy"
+	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
+
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	log "github.com/sirupsen/logrus"
@@ -20,13 +25,13 @@ type config struct {
 	tenantID       string
 }
 
-func NewAzureResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, error) {
+func NewAzureResourcesCleaner(secretData map[string][]byte, market model.Market) (ResourceCleaner, error) {
 	config, err := toConfig(secretData)
 	if err != nil {
 		return nil, err
 	}
 
-	azureClient, err := newResourceGroupsClient(config)
+	azureClient, err := NewResourceGroupsClient(config, market)
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +102,30 @@ func toConfig(secretData map[string][]byte) (config, error) {
 	}, nil
 }
 
-func newResourceGroupsClient(config config) (*armresources.ResourceGroupsClient, error) {
-	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, nil)
+func NewResourceGroupsClient(config config, market model.Market) (*armresources.ResourceGroupsClient, error) {
+	credentialOptions, clientOptions := GetClientSecretCredentialAndClientOptions(market)
+
+	credential, err := azidentity.NewClientSecretCredential(config.tenantID, config.clientID, config.clientSecret, credentialOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, nil)
+	return armresources.NewResourceGroupsClient(config.subscriptionID, credential, clientOptions)
+}
+
+func GetClientSecretCredentialAndClientOptions(market model.Market) (*azidentity.ClientSecretCredentialOptions, *arm.ClientOptions) {
+	var credentialOptions *azidentity.ClientSecretCredentialOptions
+	var clientOptions *arm.ClientOptions
+
+	if market == model.ChineseMarket {
+		credentialOptions = &azidentity.ClientSecretCredentialOptions{
+			ClientOptions:            policy.ClientOptions{Cloud: cloud.AzureChina},
+			DisableInstanceDiscovery: true, // Recommended for sovereign clouds
+		}
+		clientOptions = &arm.ClientOptions{
+			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
+		}
+
+	}
+	return credentialOptions, clientOptions
 }
