@@ -13,9 +13,9 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
 	github.com/vrischmann/envconfig v1.4.1
-	k8s.io/api v0.34.3
-	k8s.io/apimachinery v0.34.3
-	k8s.io/client-go v0.34.3
+	k8s.io/api v0.35.0
+	k8s.io/apimachinery v0.35.0
+	k8s.io/client-go v0.35.0
 )
 
 require (
@@ -45,7 +45,6 @@ require (
 	github.com/go-openapi/swag/stringutils v0.25.4 // indirect
 	github.com/go-openapi/swag/typeutils v0.25.4 // indirect
 	github.com/go-openapi/swag/yamlutils v0.25.4 // indirect
-	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/google/gnostic-models v0.7.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -92,8 +91,8 @@ replace (
 	golang.org/x/text => golang.org/x/text v0.32.0
 	golang.org/x/time => golang.org/x/time v0.14.0
 	google.golang.org/protobuf => google.golang.org/protobuf v1.36.11
-	k8s.io/api => k8s.io/api v0.34.3
-	k8s.io/apimachinery => k8s.io/apimachinery v0.34.3
-	k8s.io/client-go => k8s.io/client-go v0.34.3
-	k8s.io/kubectl => k8s.io/kubectl v0.34.3
+	k8s.io/api => k8s.io/api v0.35.0
+	k8s.io/apimachinery => k8s.io/apimachinery v0.35.0
+	k8s.io/client-go => k8s.io/client-go v0.35.0
+	k8s.io/kubectl => k8s.io/kubectl v0.35.0
 )
