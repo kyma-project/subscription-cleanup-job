@@ -20,7 +20,7 @@ jobs:
       checks: read
       contents: read
     steps:
-      - uses: wechuli/allcheckspassed@8cbfe9565cb1c23034d4a6460cccc712db7e68f3
+      - uses: wechuli/allcheckspassed@b0eaef5be76003932c9520e2b3dd03c85cc43d87
         with:
           delay: '3'
           retries: '30'
