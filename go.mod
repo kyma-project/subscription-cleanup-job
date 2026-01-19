@@ -1,9 +1,9 @@
 module github.com/kyma-project/subscription-cleanup-job
 
-go 1.25.5
+go 1.25.6
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.20.0
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.21.0
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.2.0
 	github.com/aws/aws-sdk-go-v2 v1.41.1
@@ -15,7 +15,7 @@ require (
 	github.com/vrischmann/envconfig v1.4.1
 	k8s.io/api v0.35.0
 	k8s.io/apimachinery v0.35.0
-	k8s.io/client-go v0.35.0
+	k8s.io/client-go v1.5.2
 )
 
 require (
@@ -76,7 +76,7 @@ require (
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20251125145642-4e65d59e963e // indirect
 	k8s.io/utils v0.0.0-20260108192941-914a6e750570 // indirect
-	sigs.k8s.io/controller-runtime v0.22.4 // indirect
+	sigs.k8s.io/controller-runtime v0.23.0 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.1 // indirect
@@ -93,5 +93,4 @@ replace (
 	k8s.io/api => k8s.io/api v0.35.0
 	k8s.io/apimachinery => k8s.io/apimachinery v0.35.0
 	k8s.io/client-go => k8s.io/client-go v0.35.0
-	k8s.io/kubectl => k8s.io/kubectl v0.35.0
 )
