@@ -104,7 +104,8 @@ func (p *credentialCleaner) checkIfCredentialCanBeReleased(binding unstructured.
 			Unstructured: sh,
 		}
 		// Adding additional safety check similar to the one done in https://github.com/kyma-project/kyma-environment-broker/pull/2753
-		// We can get read of logic related to secret bindings after we fully switch to credential bindings
+		// Adding additional safety check similar to the one done in https://github.com/kyma-project/kyma-environment-broker/pull/2753
+		// We can get rid of logic related to secret bindings after we fully switch to credential bindings
 		if shoot.GetSpecCredentialsBindingName() == binding.GetName() ||
 			shoot.GetSpecSecretBindingName() == binding.GetName() {
 			return false, nil
