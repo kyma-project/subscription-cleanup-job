@@ -151,6 +151,77 @@ func TestCleanerJob(t *testing.T) {
 		assert.Equal(t, "true", cleanedSecretBinding.GetLabels()["dirty"])
 		assert.Equal(t, "tenant1", cleanedSecretBinding.GetLabels()["tenantName"])
 	})
+
+	t.Run("should not return secret binding to the secrets pool when credential binding is still in use", func(t *testing.T) {
+		//given
+		secret := &v1.Secret{
+			ObjectMeta: machineryv1.ObjectMeta{
+				Name: "credential-secret1", Namespace: namespace,
+			},
+			Data: map[string][]byte{
+				"credentials":    []byte("secret1"),
+				"clientID":       []byte("tenant1"),
+				"clientSecret":   []byte("secret"),
+				"subscriptionID": []byte("12344"),
+				"tenantID":       []byte("tenant1"),
+			},
+		}
+		credentialBinding := &unstructured.Unstructured{
+			Object: map[string]interface{}{
+				"metadata": map[string]interface{}{
+					"name":      "credentialBinding1",
+					"namespace": namespace,
+					"labels": map[string]interface{}{
+						"tenantName":      "tenant1",
+						"hyperscalerType": "azure",
+						"dirty":           "true",
+					},
+				},
+				"credentialsRef": map[string]interface{}{
+					"name":      "credential-secret1",
+					"namespace": namespace,
+				},
+			},
+		}
+		credentialBinding.SetGroupVersionKind(credentialBindingGVK)
+
+		shoot := &unstructured.Unstructured{
+			Object: map[string]interface{}{
+				"metadata": map[string]interface{}{
+					"name":      "some-name",
+					"namespace": namespace,
+				},
+				"spec": map[string]interface{}{
+					"credentialsBindingName": credentialBinding.GetName(),
+				},
+				"status": map[string]interface{}{},
+			},
+		}
+		shoot.SetGroupVersionKind(shootGVK)
+
+		mockClient := fake.NewClientset(secret)
+
+		gardenerFake := gardener.NewDynamicFakeClient(credentialBinding, shoot)
+		mockCredentialBindings := gardenerFake.Resource(gardener.CredentialsBindingResource).Namespace(namespace)
+		mockShoots := gardenerFake.Resource(gardener.ShootResource).Namespace(namespace)
+
+		resCleaner := &azureMockResourceCleaner{}
+		providerFactory := &mocks.ProviderFactory{}
+		providerFactory.On("New", model.Azure, mock.Anything).Return(resCleaner, nil)
+
+		cleaner := NewSecretBindingCleaner(context.Background(), mockClient, mockCredentialBindings, mockShoots, model.ChineseMarket, providerFactory)
+
+		//when
+		err := cleaner.Do()
+
+		//then
+		require.NoError(t, err)
+		cleanedBinding, err := mockCredentialBindings.Get(context.Background(), credentialBinding.GetName(), machineryv1.GetOptions{})
+		require.NoError(t, err)
+
+		assert.Equal(t, "true", cleanedBinding.GetLabels()["dirty"])
+		assert.Equal(t, "tenant1", cleanedBinding.GetLabels()["tenantName"])
+	})
 }
 
 type azureMockResourceCleaner struct {
