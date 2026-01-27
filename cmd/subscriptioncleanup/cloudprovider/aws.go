@@ -83,7 +83,7 @@ func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) 
 	var allRegions bool
 	var region string
 
-	switch market {
+	switch ac.market {
 	case model.GlobalMarket:
 		allRegions = false
 		region = "us-east-1"
