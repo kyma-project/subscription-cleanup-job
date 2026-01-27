@@ -36,7 +36,7 @@ func NewAwsResourcesCleaner(secretData map[string][]byte, market model.Market) (
 }
 
 func (ac awsResourceCleaner) Do() error {
-	allRegions, err := ac.getAllRegions(ac.market)
+	allRegions, err := ac.getAllRegions()
 	if err != nil {
 		return err
 	}
