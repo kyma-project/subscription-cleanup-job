@@ -79,7 +79,7 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client *ec2.Client) error {
 	return nil
 }
 
-func (ac awsResourceCleaner) getAllRegions(market model.Market) (ec2.DescribeRegionsOutput, error) {
+func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) {
 	var allRegions bool
 	var region string
 
