@@ -2,6 +2,7 @@ package cloudprovider
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
 
@@ -69,11 +70,20 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client *ec2.Client) error {
 		}
 	}
 
+	var errs []error
 	for _, volume := range volumes.Volumes {
 		logrus.Printf("Deleting volume with id %v", *volume.VolumeId)
-		ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
+		_, err := ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
 			VolumeId: volume.VolumeId,
 		})
+
+		if err != nil {
+			errs = append(errs, fmt.Errorf("failed to delete volume %v: %w", *volume.VolumeId, err))
+		}
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
 	}
 
 	return nil
@@ -86,7 +96,7 @@ func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) 
 	switch ac.market {
 	case model.GlobalMarket:
 		allRegions = false
-		region = "us-east-1"
+		region = "eu-central-1"
 	case model.ChineseMarket:
 		allRegions = true
 		region = "cn-north-1"
@@ -94,7 +104,7 @@ func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) 
 		allRegions = true
 		region = "us-gov-west-1"
 	default:
-		return ec2.DescribeRegionsOutput{}, fmt.Errorf("unsupported AWS market: %v", market)
+		return ec2.DescribeRegionsOutput{}, fmt.Errorf("unsupported AWS market: %v", ac.market)
 	}
 
 	ec2Client, err := ac.newAwsEC2Client(ac.credentials, region)
