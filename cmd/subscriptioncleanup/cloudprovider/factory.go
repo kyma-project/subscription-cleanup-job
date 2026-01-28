@@ -32,7 +32,7 @@ func (pf *providerFactory) New(hyperscalerType model.HyperscalerType, secretData
 		}
 	case model.AWS:
 		{
-			return NewAwsResourcesCleaner(secretData)
+			return NewAwsResourcesCleaner(secretData, market)
 		}
 	case model.Alicloud:
 		{

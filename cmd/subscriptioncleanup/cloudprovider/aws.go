@@ -2,11 +2,13 @@ package cloudprovider
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/kyma-project/subscription-cleanup-job/cmd/subscriptioncleanup/model"
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -14,6 +16,7 @@ import (
 
 type awsResourceCleaner struct {
 	credentials awsCredentialsConfig
+	market      model.Market
 }
 
 type awsCredentialsConfig struct {
@@ -21,24 +24,25 @@ type awsCredentialsConfig struct {
 	secretAccessKey string
 }
 
-func NewAwsResourcesCleaner(secretData map[string][]byte) (ResourceCleaner, error) {
-	awsResourceCleaner := awsResourceCleaner{}
-	awsConfig, err := awsResourceCleaner.toAwsConfig(secretData)
+func NewAwsResourcesCleaner(secretData map[string][]byte, market model.Market) (ResourceCleaner, error) {
+	awsConfig, err := toAwsConfig(secretData)
 	if err != nil {
 		return nil, err
 	}
 
-	awsResourceCleaner.credentials = awsConfig
-	return awsResourceCleaner, nil
+	return awsResourceCleaner{
+		credentials: awsConfig,
+		market:      market,
+	}, nil
 }
 
 func (ac awsResourceCleaner) Do() error {
-	all_regions, err := ac.getAllRegions()
+	allRegions, err := ac.getAllRegions()
 	if err != nil {
 		return err
 	}
 
-	for _, region := range all_regions.Regions {
+	for _, region := range allRegions.Regions {
 		logrus.Printf("Switching to region %v", *region.RegionName)
 		ec2Client, err := ac.newAwsEC2Client(ac.credentials, *region.RegionName)
 		if err != nil {
@@ -54,7 +58,7 @@ func (ac awsResourceCleaner) Do() error {
 	return nil
 }
 
-func (ac awsResourceCleaner) deleteVolumes(ec2Client ec2.Client) error {
+func (ac awsResourceCleaner) deleteVolumes(ec2Client *ec2.Client) error {
 	volumes, err := ec2Client.DescribeVolumes(context.TODO(), &ec2.DescribeVolumesInput{})
 	if err != nil {
 		return err
@@ -66,19 +70,44 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client ec2.Client) error {
 		}
 	}
 
+	var errs []error
 	for _, volume := range volumes.Volumes {
 		logrus.Printf("Deleting volume with id %v", *volume.VolumeId)
-		ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
+		_, err := ec2Client.DeleteVolume(context.TODO(), &ec2.DeleteVolumeInput{
 			VolumeId: volume.VolumeId,
 		})
+
+		if err != nil {
+			errs = append(errs, fmt.Errorf("failed to delete volume %v: %w", *volume.VolumeId, err))
+		}
+	}
+
+	if len(errs) > 0 {
+		return errors.Join(errs...)
 	}
 
 	return nil
 }
 
 func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) {
-	allRegions := false
-	ec2Client, err := ac.newAwsEC2Client(ac.credentials, "eu-central-1")
+	var allRegions bool
+	var region string
+
+	switch ac.market {
+	case model.GlobalMarket:
+		allRegions = false
+		region = "eu-central-1"
+	case model.ChineseMarket:
+		allRegions = true
+		region = "cn-north-1"
+	case model.USGovMarket:
+		allRegions = true
+		region = "us-gov-west-1"
+	default:
+		return ec2.DescribeRegionsOutput{}, fmt.Errorf("unsupported AWS market: %v", ac.market)
+	}
+
+	ec2Client, err := ac.newAwsEC2Client(ac.credentials, region)
 	if err != nil {
 		return ec2.DescribeRegionsOutput{}, err
 	}
@@ -91,7 +120,7 @@ func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) 
 	return *regionOutput, nil
 }
 
-func (ac awsResourceCleaner) toAwsConfig(secretData map[string][]byte) (awsCredentialsConfig, error) {
+func toAwsConfig(secretData map[string][]byte) (awsCredentialsConfig, error) {
 	accessKeyID, exists := secretData["accessKeyID"]
 	if !exists {
 		return awsCredentialsConfig{}, fmt.Errorf("AccessKeyID was not provided in secret!")
@@ -108,9 +137,16 @@ func (ac awsResourceCleaner) toAwsConfig(secretData map[string][]byte) (awsCrede
 	}, nil
 }
 
-func (ac awsResourceCleaner) newAwsEC2Client(awsCredentialConfig awsCredentialsConfig, region string) (ec2.Client, error) {
-	return *ec2.New(ec2.Options{
-		Region:      region,
-		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(awsCredentialConfig.accessKeyID, awsCredentialConfig.secretAccessKey, "")),
-	}), nil
+func (ac awsResourceCleaner) newAwsEC2Client(awsCredentialConfig awsCredentialsConfig, region string) (*ec2.Client, error) {
+	creds := credentials.NewStaticCredentialsProvider(awsCredentialConfig.accessKeyID, awsCredentialConfig.secretAccessKey, "")
+
+	cfg, err := awsconfig.LoadDefaultConfig(context.TODO(),
+		awsconfig.WithRegion(region),
+		awsconfig.WithCredentialsProvider(creds),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return ec2.NewFromConfig(cfg), nil
 }
