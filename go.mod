@@ -91,7 +91,7 @@ require (
 )
 
 replace (
-	golang.org/x/crypto => golang.org/x/crypto v0.47.0
+	golang.org/x/crypto => golang.org/x/crypto v0.50.0
 	golang.org/x/net => golang.org/x/net v0.53.0
 	golang.org/x/oauth2 => golang.org/x/oauth2 v0.34.0
 	golang.org/x/text => golang.org/x/text v0.33.0
