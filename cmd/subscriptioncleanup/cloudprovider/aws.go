@@ -42,9 +42,9 @@ func (ac awsResourceCleaner) Do() error {
 		return err
 	}
 
-	for _, region := range allRegions.Regions {
-		logrus.Printf("Switching to region %v", *region.RegionName)
-		ec2Client, err := ac.newAwsEC2Client(ac.credentials, *region.RegionName)
+	for _, region := range allRegions {
+		logrus.Printf("Switching to region %v", region)
+		ec2Client, err := ac.newAwsEC2Client(ac.credentials, region)
 		if err != nil {
 			return err
 		}
@@ -89,35 +89,32 @@ func (ac awsResourceCleaner) deleteVolumes(ec2Client *ec2.Client) error {
 	return nil
 }
 
-func (ac awsResourceCleaner) getAllRegions() (ec2.DescribeRegionsOutput, error) {
-	var allRegions bool
-	var region string
-
+func (ac awsResourceCleaner) getAllRegions() ([]string, error) {
+	// This is a temporary solution ; list of available regions must be passed to the SCJ job
 	switch ac.market {
 	case model.GlobalMarket:
-		allRegions = false
-		region = "eu-central-1"
+		return []string{
+			"eu-central-1",
+			"eu-south-1",
+			"eu-west-2",
+			"ca-central-1",
+			"sa-east-1",
+			"us-east-1",
+			"us-west-2",
+			"ap-northeast-1",
+			"ap-northeast-2",
+			"ap-south-1",
+			"ap-southeast-1",
+			"ap-southeast-2",
+			"eu-west-1", // used for trials
+		}, nil
 	case model.ChineseMarket:
-		allRegions = true
-		region = "cn-north-1"
+		return []string{"cn-north-1", "cn-northwest-1"}, nil
 	case model.USGovMarket:
-		allRegions = true
-		region = "us-gov-west-1"
-	default:
-		return ec2.DescribeRegionsOutput{}, fmt.Errorf("unsupported AWS market: %v", ac.market)
+		return []string{"us-gov-east-1", "us-gov-west-1"}, nil
 	}
 
-	ec2Client, err := ac.newAwsEC2Client(ac.credentials, region)
-	if err != nil {
-		return ec2.DescribeRegionsOutput{}, err
-	}
-
-	regionOutput, err := ec2Client.DescribeRegions(context.TODO(), &ec2.DescribeRegionsInput{AllRegions: &allRegions})
-	if err != nil {
-		return ec2.DescribeRegionsOutput{}, err
-	}
-
-	return *regionOutput, nil
+	return nil, nil
 }
 
 func toAwsConfig(secretData map[string][]byte) (awsCredentialsConfig, error) {
