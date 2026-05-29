@@ -114,7 +114,8 @@ func (ac awsResourceCleaner) getAllRegions() ([]string, error) {
 		return []string{"us-gov-east-1", "us-gov-west-1"}, nil
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("unsupported AWS market: %v", ac.market)
+}
 }
 
 func toAwsConfig(secretData map[string][]byte) (awsCredentialsConfig, error) {
