@@ -27,14 +27,14 @@ func NewHyperscalerType(provider string) (HyperscalerType, error) {
 type Market string
 
 const (
-	GlobalMarket  Market = "global"
-	ChineseMarket Market = "chinese"
-	USGovMarket   Market = "ns2"
+	GlobalMarket       Market = "global"
+	ChineseMarket      Market = "chinese"
+	UnitedStatesMarket Market = "united-states"
 )
 
 func (e Market) IsValid() bool {
 	switch e {
-	case GlobalMarket, ChineseMarket, USGovMarket:
+	case GlobalMarket, ChineseMarket, UnitedStatesMarket:
 		return true
 	}
 	return false
