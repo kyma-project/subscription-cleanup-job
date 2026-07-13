@@ -21,7 +21,7 @@ func TestNewAzureResourcesCleaner_WithMarket(t *testing.T) {
 		"tenantID":       []byte("tenant-id"),
 	}
 
-	markets := []model.Market{model.GlobalMarket, model.ChineseMarket, model.UnitedStatesMarket}
+	markets := []model.Market{model.GlobalMarket, model.ChineseMarket, model.USGovMarket}
 	for _, m := range markets {
 		m := m
 		t.Run(m.String(), func(t *testing.T) {
@@ -52,7 +52,7 @@ func TestGetClientSecretCredentialOptions(t *testing.T) {
 	}
 
 	// US Government market should return options structs configured for Azure Government
-	optsCredUS, optsCliUS := GetClientSecretCredentialAndClientOptions(model.UnitedStatesMarket)
+	optsCredUS, optsCliUS := GetClientSecretCredentialAndClientOptions(model.USGovMarket)
 	if assert.NotNil(t, optsCredUS) {
 		assert.Equal(t, cloud.AzureGovernment, optsCredUS.ClientOptions.Cloud)
 		assert.True(t, optsCredUS.DisableInstanceDiscovery)

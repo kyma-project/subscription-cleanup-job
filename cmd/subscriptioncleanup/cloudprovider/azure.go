@@ -117,7 +117,7 @@ func GetClientSecretCredentialAndClientOptions(market model.Market) (*azidentity
 	switch market {
 	case model.ChineseMarket:
 		return cloudOptions(cloud.AzureChina)
-	case model.UnitedStatesMarket:
+	case model.USGovMarket:
 		return cloudOptions(cloud.AzureGovernment)
 	default:
 		return nil, nil

@@ -110,7 +110,7 @@ func (ac awsResourceCleaner) getAllRegions() ([]string, error) {
 		}, nil
 	case model.ChineseMarket:
 		return []string{"cn-north-1", "cn-northwest-1"}, nil
-	case model.UnitedStatesMarket:
+	case model.USGovMarket:
 		return []string{"us-gov-east-1", "us-gov-west-1"}, nil
 	}
 
