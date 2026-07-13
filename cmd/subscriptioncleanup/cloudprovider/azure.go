@@ -114,18 +114,22 @@ func NewResourceGroupsClient(config config, market model.Market) (*armresources.
 }
 
 func GetClientSecretCredentialAndClientOptions(market model.Market) (*azidentity.ClientSecretCredentialOptions, *arm.ClientOptions) {
-	var credentialOptions *azidentity.ClientSecretCredentialOptions
-	var clientOptions *arm.ClientOptions
-
-	if market == model.ChineseMarket {
-		credentialOptions = &azidentity.ClientSecretCredentialOptions{
-			ClientOptions:            policy.ClientOptions{Cloud: cloud.AzureChina},
-			DisableInstanceDiscovery: true, // Recommended for sovereign clouds
-		}
-		clientOptions = &arm.ClientOptions{
-			ClientOptions: policy.ClientOptions{Cloud: cloud.AzureChina},
-		}
-
+	switch market {
+	case model.ChineseMarket:
+		return cloudOptions(cloud.AzureChina)
+	case model.UnitedStatesMarket:
+		return cloudOptions(cloud.AzureGovernment)
+	default:
+		return nil, nil
 	}
-	return credentialOptions, clientOptions
+}
+
+func cloudOptions(c cloud.Configuration) (*azidentity.ClientSecretCredentialOptions, *arm.ClientOptions) {
+	return &azidentity.ClientSecretCredentialOptions{
+			ClientOptions:            policy.ClientOptions{Cloud: c},
+			DisableInstanceDiscovery: true,
+		},
+		&arm.ClientOptions{
+			ClientOptions: policy.ClientOptions{Cloud: c},
+		}
 }

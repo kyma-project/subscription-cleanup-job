@@ -21,7 +21,7 @@ func TestNewAzureResourcesCleaner_WithMarket(t *testing.T) {
 		"tenantID":       []byte("tenant-id"),
 	}
 
-	markets := []model.Market{model.GlobalMarket, model.ChineseMarket}
+	markets := []model.Market{model.GlobalMarket, model.ChineseMarket, model.UnitedStatesMarket}
 	for _, m := range markets {
 		m := m
 		t.Run(m.String(), func(t *testing.T) {
@@ -41,13 +41,23 @@ func TestGetClientSecretCredentialOptions(t *testing.T) {
 	assert.Nil(t, optsCredsGlobal)
 	assert.Nil(t, optsClientGlobal)
 
-	// Chinese market should return an options structs configured for Azure China
+	// Chinese market should return options structs configured for Azure China
 	optsCredChina, optsCliChina := GetClientSecretCredentialAndClientOptions(model.ChineseMarket)
 	if assert.NotNil(t, optsCredChina) {
 		assert.Equal(t, cloud.AzureChina, optsCredChina.ClientOptions.Cloud)
+		assert.True(t, optsCredChina.DisableInstanceDiscovery)
 	}
-
 	if assert.NotNil(t, optsCliChina) {
 		assert.Equal(t, cloud.AzureChina, optsCliChina.ClientOptions.Cloud)
+	}
+
+	// US Government market should return options structs configured for Azure Government
+	optsCredUS, optsCliUS := GetClientSecretCredentialAndClientOptions(model.UnitedStatesMarket)
+	if assert.NotNil(t, optsCredUS) {
+		assert.Equal(t, cloud.AzureGovernment, optsCredUS.ClientOptions.Cloud)
+		assert.True(t, optsCredUS.DisableInstanceDiscovery)
+	}
+	if assert.NotNil(t, optsCliUS) {
+		assert.Equal(t, cloud.AzureGovernment, optsCliUS.ClientOptions.Cloud)
 	}
 }
