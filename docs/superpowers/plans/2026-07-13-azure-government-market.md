@@ -2,7 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add `UnitedStatesMarket` ("united-states") to the market model and wire it up to `cloud.AzureGovernment` in the Azure SDK client options, mirroring how PR #127 added Chinese market support.
+**Goal:** Add `USGovMarket` ("ns2") to the market model and wire it up to `cloud.AzureGovernment` in the Azure SDK client options, mirroring how PR #127 added Chinese market support.
+
+> **Note:** During implementation the constant was renamed from `UnitedStatesMarket`/`"united-states"` (as originally planned) to `USGovMarket`/`"ns2"` to match GovCloud naming conventions. Step content below reflects the original plan; the rename is captured in commit `refactor: rename UnitedStatesMarket to USGovMarket (ns2)`.
 
 **Architecture:** The `Market` type in `model/types.go` is threaded through the entire call stack. `GetClientSecretCredentialAndClientOptions` in `azure.go` is the single place that maps a `Market` to Azure SDK cloud options. Refactor that function to use a `switch` + private helper to eliminate duplication between China and US Government.
 
