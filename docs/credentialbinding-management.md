@@ -83,6 +83,58 @@ stateDiagram-v2
 
 ---
 
+## Cluster Access Map
+
+Which Kubernetes clusters each component talks to, and why.
+
+```mermaid
+graph TD
+    subgraph KCP["KCP cluster (in-cluster)"]
+        KEB["KEB<br/>(Kyma Environment Broker)"]
+        KIM["KIM<br/>(Kyma Infrastructure Manager)"]
+        KCPSECRETS["kubeconfig-&lt;runtimeID&gt; Secrets<br/>(kcp-system)"]
+        KCPCRS["Runtime / Kyma CRs<br/>(kcp-system)"]
+    end
+
+    subgraph Gardener["Gardener cluster"]
+        SHOOTS["Shoots"]
+        CREDBINDINGS["CredentialsBindings / SecretBindings"]
+        CLOUDSECRETS["Cloud-credential Secrets"]
+    end
+
+    subgraph SKR["SKR (Shoot Kubernetes Runtime)"]
+        SKRRESOURCES["kyma-system resources<br/>(ClusterRoleBindings, namespaces, …)"]
+    end
+
+    SCJ["SCJ<br/>(Subscription Cleanup Job)<br/>one-shot pod on KCP"]
+
+    KEB -->|"in-cluster REST config<br/>(reads/writes Runtime CRs, kubeconfig secrets)"| KCPCRS
+    KEB -->|"Gardener kubeconfig<br/>(list/label CredentialsBindings & Shoots)"| CREDBINDINGS
+    KEB -->|"Gardener kubeconfig<br/>(list Shoots, read cloud-cred Secrets)"| SHOOTS
+    KEB -->|"kubeconfig from KCP Secret<br/>(provision/deprovision SKR resources)"| SKRRESOURCES
+
+    KIM -->|"in-cluster REST config<br/>(watches Runtime CRs, stores kubeconfig secrets)"| KCPCRS
+    KIM -->|"in-cluster REST config<br/>(reads kubeconfig-&lt;runtimeID&gt; to reach SKR)"| KCPSECRETS
+    KIM -->|"Gardener kubeconfig<br/>(create/patch Shoots)"| SHOOTS
+    KIM -->|"kubeconfig from KCP Secret<br/>(bootstrap SKR: namespaces, CRBs, audit-log creds)"| SKRRESOURCES
+
+    SCJ -->|"Gardener kubeconfig<br/>(list dirty CredentialsBindings, read cloud-cred Secrets)"| CREDBINDINGS
+    SCJ -->|"Gardener kubeconfig<br/>(verify no Shoots reference binding)"| SHOOTS
+    SCJ -->|"Gardener kubeconfig<br/>(read bound cloud-credential Secret)"| CLOUDSECRETS
+```
+
+| Component | KCP cluster | Gardener cluster | SKR (shoot) |
+|-----------|:-----------:|:----------------:|:-----------:|
+| KEB | ✅ in-cluster | ✅ via kubeconfig | ✅ via KCP Secret |
+| KIM | ✅ in-cluster | ✅ via kubeconfig | ✅ via KCP Secret |
+| SCJ | ❌ | ✅ via kubeconfig | ❌ |
+
+**KCP** = Kyma Control Plane (hosts Runtime/Kyma CRs and kubeconfig Secrets for each SKR)  
+**Gardener** = Gardener project namespace (hosts Shoots, CredentialsBindings, cloud-cred Secrets)  
+**SKR** = Shoot Kubernetes Runtime (the end-user cluster provisioned by Gardener)
+
+---
+
 ## Component Responsibility Summary
 
 | Action | Component | Mechanism |
