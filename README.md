@@ -10,6 +10,8 @@ Subscription Cleanup Job (SCJ) is a subcomponent of [Kyma Control Plane](https:/
 
 For more information on KCP and its components, read the [KCP documentation](https://github.com/kyma-project/control-plane/tree/main/docs) and the [KEB documentation](https://github.com/kyma-project/kyma-environment-broker/blob/main/docs).
 
+For details on how SCJ interacts with KEB and KIM around CredentialBinding lifecycle, see [CredentialBinding Management](docs/credentialbinding-management.md).
+
 ## Run SCJ Locally
 
 1. Download your Gardener kubeconfig. It can be a personal kubeconfig; a service account isn't required.
