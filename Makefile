@@ -86,3 +86,7 @@ clean-up:
 .PHONY: test
 test:
 	GOFIPS140=v1.0.0 go test ./...
+
+.PHONY: build-for-codeql
+build-for-codeql: ## Build all binaries for CodeQL analysis.
+	go build -o /dev/null ./...
