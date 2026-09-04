@@ -1,6 +1,6 @@
 module github.com/kyma-project/subscription-cleanup-job
 
-go 1.27
+go 1.27.1
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.21.0
