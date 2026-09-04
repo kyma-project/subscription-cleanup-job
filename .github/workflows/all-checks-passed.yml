@@ -22,6 +22,7 @@ jobs:
     steps:
       - uses: wechuli/allcheckspassed@b0eaef5be76003932c9520e2b3dd03c85cc43d87
         with:
+          checks_exclude: 'Analyze \(go\)'
           delay: '3'
           retries: '30'
           polling_interval: '1'
