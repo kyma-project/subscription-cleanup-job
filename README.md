@@ -13,7 +13,7 @@ For more information on KCP and its components, read the [KCP documentation](htt
 ## Run SCJ Locally
 
 1. Download your Gardener kubeconfig. It can be a personal kubeconfig; a service account isn't required.
-2. To build an SCJ, run: `go build ./cmd/subscriptioncleanup/main.go`.
+2. To build an SCJ, run: `make build`.
 3. Set the environmental variables:
    - `APP_GARDENER_PROJECT=frog-dev`
    - `APP_GARDENER_KUBECONFIG_PATH=$PWD/kubeconfig-garden-frog-dev.yaml`
