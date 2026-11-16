@@ -76,7 +76,7 @@ require (
 	golang.org/x/term v0.47.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	golang.org/x/time v0.16.0 // indirect
-	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
+	google.golang.org/protobuf v1.36.12 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -91,7 +91,7 @@ require (
 )
 
 replace (
-	google.golang.org/protobuf => google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf => google.golang.org/protobuf v1.36.12
 	k8s.io/api => k8s.io/api v0.37.2
 	k8s.io/apimachinery => k8s.io/apimachinery v0.37.2
 	k8s.io/client-go => k8s.io/client-go v0.37.2
